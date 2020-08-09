@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+
+    <a href="#" onClick="return showAddItem();"> + Add Item</a>
+    <div style="display:none" id="divItem">
+        <table>
+            <tr>
+                <td align="center">Product Name: </td>
+                <td align="left"><input type="text" id="txtName" maxlength="50" />  </td>
+            </tr>
+            <tr>
+                <td align="center">Product Description:      </td>
+                <td align="left"><input type="text" id="txtDesc" maxlength="200" /> </td>
+            </tr>
+            <tr>
+                <td align="center">Price:   </td>
+                <td align="left"><input type="text" id="txtprice" maxlength="10" /> </td>
+            </tr>
+            <tr>
+                <td align="center">Select Image  </td>
+                <td align="left"><input type="file" id="prdImg" required accept="image/jpg,image/png,image/jpeg"/> </td>
+            </tr>
+            <tr>
+                <td align="right"><input type="button" value="Save" onclick="saveItems();"/> </td>
+                <td align="left"><input type="button" value="Cancel"  onclick="cancelSave();"/> </td>
+            </tr>
+        </table>
+
+        <label id="lblError"></label>
+       
+    </div>
+   
+</div>
+<div>
+    <br /> 
+    <br /> 
+    <h3> Available Products </h3><br />
+    <div id="divList">
+        @Html.Partial("prodList")
+    </div>
+</div>
+
+
+
+<script>
+    function showAddItem()
+    {
+        document.getElementById("divItem").style.display = "block";
+        return false;
+    }
+    function cancelSave() {
+        document.getElementById("divItem").style.display = "none";
+        return false;
+    }
+    function saveItems()
+    {
+        var prdName = document.getElementById("txtName").value;
+        var prdDesc = document.getElementById("txtDesc").value;
+        var prdPrice = document.getElementById("txtprice").value;
+        var prdImg = document.getElementById("prdImg").files[0];
+
+        if (prdName.toString().trim() == "")
+        {
+            document.getElementById("lblError").innerHTML = "Please enter Product Name";
+            return false;
+        }
+        if (prdDesc.toString().trim() == "")
+        {
+            document.getElementById("lblError").innerHTML = "Please enter Product Description";
+            return false;
+        }
+        if (prdPrice.toString().trim() == "")
+        {
+            document.getElementById("lblError").innerHTML = "Please enter Product Price";
+            return false;
+        }
+        if (prdImg == undefined)
+        {
+            document.getElementById("lblError").innerHTML = "Please select image";
+            return false;
+        }
+
+        document.getElementById("lblError").innerHTML = "";
+        var fd = new FormData();
+        fd.append("name", prdName);
+        fd.append("desc", prdDesc);
+        fd.append("price", prdPrice);
+        fd.append("imgfile", prdImg);
+
+            $.ajax({
+                url: '@string.Format(System.Configuration.ConfigurationManager.AppSettings["BaseRootURL"].ToString() + "/home/saveItem")',
+                type: 'POST',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                   $('#divList')[0].innerHTML = result;
+                    document.getElementById("txtName").value = "";
+                    document.getElementById("txtDesc").value = "";
+                    document.getElementById("txtprice").value = "";
+                    document.getElementById('prdImg').value = null;
+                },
+                error: function (e) {
+                    console.log("error - saving - " + e.statusText);
+                }
+            });
+    }
+</script>

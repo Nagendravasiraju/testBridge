@@ -1,0 +1,43 @@
+﻿@using System.Data.SqlClient;
+@using System.Data;
+
+@if (ViewBag.prodList.Rows.Count >= 1)
+{
+    foreach (DataRow dr in ViewBag.prodList.Rows)
+    {
+        <div class="col-md-3">
+            <div style="float: left;width: 100%;">
+                <div>
+                    <a href='@string.Format(System.Configuration.ConfigurationManager.AppSettings["BaseRootURL"].ToString() + "/home/display/" + @dr["productId"])'>
+                        <img src='@string.Format(System.Configuration.ConfigurationManager.AppSettings["BaseRootURL"].ToString() + "/" + dr["productImage"].ToString())' style="height:200px; width:200px" />
+                    </a>
+                </div>
+                <div>
+                    <div><span>@dr["productName"] | @dr["productPrice"] </span></div>
+                    <div>
+                        <a href='@string.Format(System.Configuration.ConfigurationManager.AppSettings["BaseRootURL"].ToString() + "/home/display/" + @dr["productId"])'>
+                            <span>@dr["productDesc"]</span> </a> | <span onclick="removeItem(@dr["productId"])" style="cursor:pointer">Remove</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+<script>
+    function removeItem(id) {
+ 
+        $.ajax({
+            url: '@string.Format(System.Configuration.ConfigurationManager.AppSettings["BaseRootURL"].ToString() + "/home/removeItem")',
+            type: 'POST',
+            data: {
+                id: id,
+            },
+            success: function (result) {
+                $('#divList')[0].innerHTML = result;
+            },
+            error: function (e) {
+                console.log("error - saving - " + e.statusText);
+            }
+        });
+    }
+</script>

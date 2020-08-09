@@ -1,0 +1,41 @@
+﻿@using System.Data.SqlClient;
+@using System.Data;
+@{
+    ViewBag.Title = "Product Page";
+}
+
+<div class="row">
+
+    @if (ViewBag.prodDisplay.Rows.Count >= 1)
+    {
+       
+            foreach (DataRow dr in ViewBag.prodDisplay.Rows)
+            {
+                <div class="col-md-3">
+
+                    <div style="float: left;width: 100%;">
+                        <div>
+                            <img src='@string.Format(System.Configuration.ConfigurationManager.AppSettings["BaseRootURL"].ToString() + "/" + dr["productImage"].ToString())' style="height:200px; width:200px" />
+                        </div>
+ 
+                    </div>
+
+                </div>
+                <div class="col-md-3">
+                    <div><span style="font-size: 30px;">@dr["productName"]</span></div>
+                    <div><span style="font-size: 28px;" > Rs. @dr["productPrice"]  </span></div>
+                    <div>
+                        <span style="font-size: 24px;">@dr["productDesc"]</span>
+                    </div>
+                </div>
+        }
+
+
+
+    }
+
+   
+</div>
+
+
+
